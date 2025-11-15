@@ -113,12 +113,13 @@ yarn.lock
 # ============================================
 # TEMPORALES Y VARIOS
 # ============================================
+>>>>>>> b8637bbc151fe030bdc992b3327562c601e71859
+=======
 *.tmp
 *.temp
 *.swp
 *.swo
 *~
 .terraform/
-
-# Ignorar carpetas de IDE
-/.vscode
+=======
+>>>>>>> b8637bbc151fe030bdc992b3327562c601e71859
