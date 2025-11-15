@@ -119,3 +119,6 @@ yarn.lock
 *.swo
 *~
 .terraform/
+
+# Ignorar carpetas de IDE
+/.vscode
