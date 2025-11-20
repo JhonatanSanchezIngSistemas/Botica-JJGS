@@ -1,18 +1,24 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
     <Router>
       <Navbar />
-      <div className="container mt-4">
-        <Routes>
-          <Route path="/" element={<h1>Bienvenido a Botica JJGS</h1>} />
-          <Route path="/login" element={<h1>Login Page (To Do)</h1>} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={
+          <div className="container mt-5 text-center">
+            <h1 style={{ color: '#0056b3' }}>Bienvenido a Botica JJGS</h1>
+            <p className="lead">Sistema de Gestión Farmacéutica</p>
+          </div>
+        } />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+      </Routes>
     </Router>
   );
 }
