@@ -1,0 +1,104 @@
+================================================================================
+EVIDENCIA DE CONFIGURACION Y EJECUCION DE ESLINT
+Proyecto: Botica JJGS - Frontend
+Fecha: 20 de noviembre de 2025
+================================================================================
+
+1. ARCHIVO DE CONFIGURACION: .eslintrc.json
+================================================================================
+
+ubicacion: botica-frontend/.eslintrc.json
+
+contenido:
+{
+  "extends": [
+    "react-app",
+    "react-app/jest"
+  ],
+  "rules": {
+    "semi": ["error", "always"],
+    "quotes": ["warn", "single"],
+    "eqeqeq": "error",
+    "no-unused-vars": "warn",
+    "no-console": "warn"
+  }
+}
+
+descripcion:
+- extends: hereda configuracion base de react-app
+- semi: requiere siempre punto y coma (error si falta)
+- quotes: prefiere comillas simples (warning)
+- eqeqeq: requiere === en lugar de == (error si no)
+- no-unused-vars: advierte sobre variables no usadas
+- no-console: advierte sobre console.log()
+
+================================================================================
+2. SCRIPT DE LINT EN package.json
+================================================================================
+
+script agregado:
+"lint": "eslint src --ext .js,.jsx"
+"lint:fix": "eslint src --ext .js,.jsx --fix"
+
+uso:
+npm run lint        - ejecuta eslint y muestra errores/warnings
+npm run lint:fix    - ejecuta eslint y corrige automaticamente
+
+================================================================================
+3. ARCHIVOS REVISADOS POR ESLINT
+================================================================================
+
+total de archivos .js y .jsx analizados: 8
+
+archivos:
+✓ src/components/Navbar.jsx
+✓ src/pages/LoginPage.jsx
+✓ src/services/api.js
+✓ src/App.js
+✓ src/App.test.js
+✓ src/index.js
+✓ src/reportWebVitals.js
+✓ src/setupTests.js
+
+================================================================================
+4. RESULTADO DE EJECUCION
+================================================================================
+
+comando: npm run lint
+resultado: EXITOSO - sin errores ni warnings
+
+salida terminal:
+> botica-frontend@0.1.0 lint
+> eslint src --ext .js,.jsx
+
+(sin output = todos los archivos cumplen las reglas eslint)
+
+================================================================================
+5. COMANDO PARA CAPTURA DE PANTALLA
+================================================================================
+
+para reproducir esta evidencia:
+
+paso 1: abrir archivo .eslintrc.json
+code botica-frontend/.eslintrc.json
+
+paso 2: ejecutar lint en terminal
+cd botica-frontend
+npm run lint
+
+paso 3: ver resumen de archivos revisados
+npm run lint -- --format=compact (opcional, para ver detalle)
+
+================================================================================
+6. CONCLUSIONES
+================================================================================
+
+- eslint configurado correctamente con reglas estrictas
+- todos los archivos del frontend pasan validacion
+- scripts de npm agregados para facilitar ejecucion
+- configuracion lista para ci/cd pipeline
+
+pro tip para fix automatico:
+npm run lint:fix
+
+================================================================================
