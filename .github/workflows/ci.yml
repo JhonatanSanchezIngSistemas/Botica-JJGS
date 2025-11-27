@@ -1,0 +1,54 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  backend-build:
+    name: Backend (Java/Maven)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Botica-Backend
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Build with Maven
+      run: mvn clean install -DskipTests
+      
+    - name: Run Backend Tests
+      run: mvn test
+
+  frontend-build:
+    name: Frontend (React/Node)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./botica-frontend
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: botica-frontend/package-lock.json
+        
+    - name: Install Dependencies
+      run: npm install
+      
+    - name: Build Frontend
+      run: npm run build
