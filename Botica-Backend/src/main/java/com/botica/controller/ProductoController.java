@@ -11,26 +11,26 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/productos")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
 
     @GetMapping
-    public List<Producto> listarTodos() {
-        return productoService.listarTodos();
+    public ResponseEntity<List<Producto>> listarTodos() {
+        return ResponseEntity.ok(productoService.listarTodos());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Producto> obtenerPorId(@PathVariable Long id) {
-        Optional<Producto> producto = productoService.obtenerPorId(id);
-        return producto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return productoService.obtenerPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Producto guardar(@RequestBody Producto producto) {
-        return productoService.guardar(producto);
+    public ResponseEntity<Producto> guardar(@RequestBody Producto producto) {
+        return ResponseEntity.ok(productoService.guardar(producto));
     }
 
     @DeleteMapping("/{id}")
