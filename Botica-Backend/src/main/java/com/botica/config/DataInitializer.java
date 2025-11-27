@@ -25,7 +25,6 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Crear roles si no existen
         Role roleAdmin = roleRepository.findByName(Role.ERole.ROLE_ADMIN)
                 .orElseGet(() -> {
                     Role newRole = new Role();
@@ -40,7 +39,6 @@ public class DataInitializer implements CommandLineRunner {
                     return roleRepository.save(newRole);
                 });
 
-        // Crear usuario admin si no existe
         if (!usuarioRepository.existsByUsername("admin")) {
             Usuario admin = new Usuario();
             admin.setUsername("admin");
@@ -52,10 +50,9 @@ public class DataInitializer implements CommandLineRunner {
             admin.setRoles(roles);
 
             usuarioRepository.save(admin);
-            System.out.println("✅ Usuario admin creado: username=admin, password=admin123");
+            System.out.println("Usuario admin creado: username=admin, password=admin123");
         }
 
-        // Crear usuario normal si no existe
         if (!usuarioRepository.existsByUsername("user")) {
             Usuario user = new Usuario();
             user.setUsername("user");
@@ -67,7 +64,7 @@ public class DataInitializer implements CommandLineRunner {
             user.setRoles(roles);
 
             usuarioRepository.save(user);
-            System.out.println("✅ Usuario user creado: username=user, password=user123");
+            System.out.println("Usuario user creado: username=user, password=user123");
         }
     }
 }
