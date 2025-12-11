@@ -28,76 +28,61 @@ const MOCK_USERS = {
 
 const login = async (username, password) => {
     try {
-        // Intentar usar el backend real
-        try {
-            const response = await api.post('/auth/login', { username, password });
-
-            if (response.data.token) {
-                // Guardar token
-                localStorage.setItem('token', response.data.token);
-
-                // Guardar usuario completo (id, username, email, roles)
-                const userData = {
-                    id: response.data.id,
-                    username: response.data.username,
-                    email: response.data.email,
-                    roles: response.data.roles || []
-                };
-                localStorage.setItem('user', JSON.stringify(userData));
-
-
-            }
-
-            return response.data;
-        } catch (backendError) {
-            // Si el backend falla, usar modo DEMO
-            
-            if (username === 'admin' && password === '123456') {
-                const mockUser = MOCK_USERS.admin;
-                localStorage.setItem('token', mockUser.token);
-                localStorage.setItem('user', JSON.stringify({
-                    id: mockUser.id,
-                    username: mockUser.username,
-                    email: mockUser.email,
-                    roles: mockUser.roles
-                }));
-                
-
-                
-                return {
-                    token: mockUser.token,
-                    id: mockUser.id,
-                    username: mockUser.username,
-                    email: mockUser.email,
-                    roles: mockUser.roles
-                };
-            } else if (username === 'user' && password === '123456') {
-                const mockUser = MOCK_USERS.user;
-                localStorage.setItem('token', mockUser.token);
-                localStorage.setItem('user', JSON.stringify({
-                    id: mockUser.id,
-                    username: mockUser.username,
-                    email: mockUser.email,
-                    roles: mockUser.roles
-                }));
-                
-                logger.log('✅ Login exitoso (MODO DEMO - User)');
-                logger.log('👤 Usuario:', mockUser.username);
-                
-                return {
-                    token: mockUser.token,
-                    id: mockUser.id,
-                    username: mockUser.username,
-                    email: mockUser.email,
-                    roles: mockUser.roles
-                };
-            } else {
-                throw new Error('Credenciales inválidas. Prueba: admin/123456 o user/123456');
-            }
+        const response = await api.post('/auth/login', { username, password });
+        if (response.data.token) {
+            // Guardar token
+            localStorage.setItem('token', response.data.token);
+            // Guardar usuario completo (id, username, email, roles)
+            const userData = {
+                id: response.data.id,
+                username: response.data.username,
+                email: response.data.email,
+                roles: response.data.roles || []
+            };
+            localStorage.setItem('user', JSON.stringify(userData));
+            logger.log('Token guardado en localStorage');
         }
-    } catch (error) {
-        console.error('❌ Error en login:', error.message);
-        throw error;
+        return response.data;
+    } catch (backendError) {
+        // Si el backend falla, usar modo DEMO
+        if (username === 'admin' && password === '123456') {
+            const mockUser = MOCK_USERS.admin;
+            localStorage.setItem('token', mockUser.token);
+            localStorage.setItem('user', JSON.stringify({
+                id: mockUser.id,
+                username: mockUser.username,
+                email: mockUser.email,
+                roles: mockUser.roles
+            }));
+            return {
+                token: mockUser.token,
+                id: mockUser.id,
+                username: mockUser.username,
+                email: mockUser.email,
+                roles: mockUser.roles
+            };
+        } else if (username === 'user' && password === '123456') {
+            const mockUser = MOCK_USERS.user;
+            localStorage.setItem('token', mockUser.token);
+            localStorage.setItem('user', JSON.stringify({
+                id: mockUser.id,
+                username: mockUser.username,
+                email: mockUser.email,
+                roles: mockUser.roles
+            }));
+            logger.log('✅ Login exitoso (MODO DEMO - User)');
+            logger.log('👤 Usuario:', mockUser.username);
+            return {
+                token: mockUser.token,
+                id: mockUser.id,
+                username: mockUser.username,
+                email: mockUser.email,
+                roles: mockUser.roles
+            };
+        } else {
+            logger.error('❌ Error en login:', backendError.message);
+            throw new Error('Credenciales inválidas. Prueba: admin/123456 o user/123456');
+        }
     }
 };
 

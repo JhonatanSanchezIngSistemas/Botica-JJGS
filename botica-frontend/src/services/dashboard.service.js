@@ -1,4 +1,5 @@
 import api from './api';
+import logger from '../utils/logger';
 
 /**
  * Dashboard Service
@@ -14,7 +15,7 @@ const getStats = async () => {
         const response = await api.get('/api/dashboard/stats');
         return response.data;
     } catch (error) {
-        console.error('Error obteniendo stats:', error);
+        logger.error('Error obteniendo stats:', error);
         throw error;
     }
 };
@@ -28,7 +29,7 @@ const getVentasChart = async () => {
         const response = await api.get('/api/dashboard/charts/ventas');
         return response.data;
     } catch (error) {
-        console.error('Error obteniendo chart ventas:', error);
+        logger.error('Error obteniendo chart ventas:', error);
         throw error;
     }
 };
@@ -42,7 +43,7 @@ const getCategoriasChart = async () => {
         const response = await api.get('/api/dashboard/charts/categorias');
         return response.data;
     } catch (error) {
-        console.error('Error obteniendo chart categorías:', error);
+        logger.error('Error obteniendo chart categorías:', error);
         throw error;
     }
 };
@@ -56,7 +57,7 @@ const getProductosRecientes = async () => {
         const response = await api.get('/api/dashboard/productos/recientes');
         return response.data;
     } catch (error) {
-        console.error('Error obteniendo productos recientes:', error);
+        logger.error('Error obteniendo productos recientes:', error);
         throw error;
     }
 };
