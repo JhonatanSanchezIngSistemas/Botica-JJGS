@@ -71,7 +71,8 @@ const DashboardPage = () => {
             setStats({
                 ventasHoy: data.ventasHoy || 0,
                 pedidos: data.pedidosHoy || 0,
-                stockCritico: data.stockCritico || 0
+                stockCritico: data.stockCritico || 0,
+                totalProductos: data.totalProductos || 0
             });
         } catch (error) {
             console.error('Error loading stats:', error);
@@ -86,11 +87,11 @@ const DashboardPage = () => {
 
             // Calcular stock crítico (productos con menos de 10 unidades)
             const critical = data.filter(p => p.stock < 10).length;
-            setStats(prev => ({ ...prev, stockCritico: critical }));
+            setStats(prev => ({ ...prev, stockCritico: critical, totalProductos: data.length }));
 
             setLoading(false);
         } catch (error) {
-            // Error handling: product loading failed
+            console.error('Error loading productos:', error);
             setLoading(false);
         }
     };
@@ -107,24 +108,12 @@ const DashboardPage = () => {
         }
     };
 
-    const renderContent = () => {
-        switch (activeMenu) {
-            case 'dashboard':
-                return renderDashboard();
-            case 'inventory':
-                return <div className={styles.emptyState}>Abre el modal de inventario desde el sidebar</div>;
-            case 'sales':
-                return <div className={styles.emptyState}>Módulo de Ventas (próximamente)</div>;
-            case 'reports':
-                return <div className={styles.emptyState}>Módulo de Reportes (próximamente)</div>;
-            case 'settings':
-                return <div className={styles.emptyState}>Configuración (próximamente)</div>;
-            default:
-                return renderDashboard();
-        }
+    const handleRefreshProducts = () => {
+        loadProductos();
+        loadStats();
     };
 
-    const renderDashboard = () => (
+    return (
         <div className={styles.dashboard}>
             {/* Sidebar */}
             <aside className={styles.sidebar}>
@@ -136,14 +125,44 @@ const DashboardPage = () => {
                 </div>
 
                 <nav className={styles.menu}>
-                    <MenuItem icon={<FiHome />} text="Dashboard" active={activeMenu === 'dashboard'} onClick={() => setActiveMenu('dashboard')} />
-                    <MenuItem icon={<FiPackage />} text="Inventario IA" active={activeMenu === 'inventory'} onClick={() => setActiveMenu('inventory')} />
-                    <MenuItem icon={<FiShoppingCart />} text="Ventas" active={activeMenu === 'sales'} onClick={() => setActiveMenu('sales')} />
-                    <MenuItem icon={<FiBarChart2 />} text="Reportes" active={activeMenu === 'reports'} onClick={() => setActiveMenu('reports')} />
-                    <MenuItem icon={<FiSettings />} text="Configuración" active={activeMenu === 'settings'} onClick={() => setActiveMenu('settings')} />
+                    <MenuItem 
+                        icon={<FiHome />} 
+                        text="Dashboard" 
+                        active={activeMenu === 'dashboard'} 
+                        onClick={() => handleMenuClick('dashboard')} 
+                    />
+                    <MenuItem 
+                        icon={<FiPackage />} 
+                        text="Inventario IA" 
+                        active={activeMenu === 'inventory'} 
+                        onClick={() => handleMenuClick('inventory')} 
+                    />
+                    <MenuItem 
+                        icon={<FiShoppingCart />} 
+                        text="Ventas" 
+                        active={activeMenu === 'sales'} 
+                        onClick={() => handleMenuClick('sales')} 
+                    />
+                    <MenuItem 
+                        icon={<FiBarChart2 />} 
+                        text="Reportes" 
+                        active={activeMenu === 'reports'} 
+                        onClick={() => handleMenuClick('reports')} 
+                    />
+                    <MenuItem 
+                        icon={<FiSettings />} 
+                        text="Configuración" 
+                        active={activeMenu === 'settings'} 
+                        onClick={() => handleMenuClick('settings')} 
+                    />
 
                     <div style={{ marginTop: 'auto' }}>
-                        <MenuItem icon={<FiLogOut />} text="Cerrar Sesión" danger onClick={handleLogout} />
+                        <MenuItem 
+                            icon={<FiLogOut />} 
+                            text="Cerrar Sesión" 
+                            danger 
+                            onClick={handleLogout} 
+                        />
                     </div>
                 </nav>
             </aside>
@@ -169,93 +188,116 @@ const DashboardPage = () => {
                     </div>
                 </header>
 
-                {/* KPI Cards */}
-                <div className={styles.kpiGrid}>
-                    <KPICard
-                        icon={<FiDollarSign />}
-                        title="Ventas Hoy"
-                        value={`S/ ${stats.ventasHoy.toLocaleString()}`}
-                        trend="+15%"
-                        trendUp
-                        iconBg="var(--primary)"
-                    />
-                    <KPICard
-                        icon={<FiShoppingCart />}
-                        title="Pedidos"
-                        value={stats.pedidos}
-                        trend="+5%"
-                        trendUp
-                        iconBg="var(--accent)"
-                    />
-                    <KPICard
-                        icon={<FiPackage />}
-                        title="Productos"
-                        value={loading ? '...' : productos.length}
-                        trend={`${productos.length} en stock`}
-                        iconBg="var(--accent)"
-                    />
-                    <KPICard
-                        icon={<FiAlertTriangle />}
-                        title="Stock Crítico"
-                        value={stats.stockCritico}
-                        trend={stats.stockCritico > 0 ? 'Acción req.' : 'Todo bien'}
-                        iconBg="#ef4444"
-                    />
-                </div>
-
-                {/* Charts */}
-                <div className={styles.chartsContainer}>
-                    <div className={styles.chartBox}>
-                        <h3>Flujo de Ventas (Tiempo Real)</h3>
-                        <Line data={salesChartData} options={chartOptions} />
-                    </div>
-
-                    <div className={styles.chartBox}>
-                        <h3>Top Categorías</h3>
-                        <Doughnut data={categoryChartData} options={doughnutOptions} />
-                    </div>
-                </div>
-
-                {/* Recent Products Table */}
-                {!loading && productos.length > 0 && (
-                    <div className={styles.tableBox}>
-                        <div className={styles.tableHeader}>
-                            <h3>Productos Recientes</h3>
-                            <button className={styles.btnSmall} onClick={loadProductos}>
-                                Actualizar
-                            </button>
+                {/* Content based on active menu */}
+                {activeMenu === 'dashboard' ? (
+                    <>
+                        {/* KPI Cards */}
+                        <div className={styles.kpiGrid}>
+                            <KPICard
+                                icon={<FiDollarSign />}
+                                title="Ventas Hoy"
+                                value={`S/ ${stats.ventasHoy.toLocaleString()}`}
+                                trend="+15%"
+                                trendUp
+                                iconBg="var(--primary)"
+                            />
+                            <KPICard
+                                icon={<FiShoppingCart />}
+                                title="Pedidos"
+                                value={stats.pedidos}
+                                trend="+5%"
+                                trendUp
+                                iconBg="var(--accent)"
+                            />
+                            <KPICard
+                                icon={<FiPackage />}
+                                title="Productos"
+                                value={loading ? '...' : stats.totalProductos}
+                                trend={`${stats.totalProductos} en stock`}
+                                iconBg="var(--accent)"
+                                onClick={() => setShowProductModal(true)}
+                            />
+                            <KPICard
+                                icon={<FiAlertTriangle />}
+                                title="Stock Crítico"
+                                value={stats.stockCritico}
+                                trend={stats.stockCritico > 0 ? 'Acción req.' : 'Todo bien'}
+                                iconBg="#ef4444"
+                            />
                         </div>
-                        <div className={styles.tableContainer}>
-                            <table className={styles.table}>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Precio</th>
-                                        <th>Stock</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {productos.slice(0, 5).map(producto => (
-                                        <tr key={producto.id}>
-                                            <td>#{producto.id}</td>
-                                            <td>{producto.nombre}</td>
-                                            <td>S/ {producto.precio.toFixed(2)}</td>
-                                            <td>{producto.stock}</td>
-                                            <td>
-                                                <span className={`${styles.badge} ${producto.stock < 10 ? styles.badgeDanger : styles.badgeSuccess}`}>
-                                                    {producto.stock < 10 ? 'Crítico' : 'Normal'}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+
+                        {/* Charts */}
+                        <div className={styles.chartsContainer}>
+                            <div className={styles.chartBox}>
+                                <h3>Flujo de Ventas (Tiempo Real)</h3>
+                                <Line data={salesChartData} options={chartOptions} />
+                            </div>
+
+                            <div className={styles.chartBox}>
+                                <h3>Top Categorías</h3>
+                                <Doughnut data={categoryChartData} options={doughnutOptions} />
+                            </div>
                         </div>
+
+                        {/* Recent Products Table */}
+                        {!loading && productos.length > 0 && (
+                            <div className={styles.tableBox}>
+                                <div className={styles.tableHeader}>
+                                    <h3>Productos en Stock</h3>
+                                    <button className={styles.btnSmall} onClick={loadProductos}>
+                                        Actualizar
+                                    </button>
+                                </div>
+                                <div className={styles.tableContainer}>
+                                    <table className={styles.table}>
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nombre</th>
+                                                <th>Precio</th>
+                                                <th>Stock</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {productos.slice(0, 5).map(producto => (
+                                                <tr key={producto.id}>
+                                                    <td>#{producto.id}</td>
+                                                    <td>{producto.nombre}</td>
+                                                    <td>S/ {producto.precio.toFixed(2)}</td>
+                                                    <td>{producto.stock}</td>
+                                                    <td>
+                                                        <span className={`${styles.badge} ${producto.stock < 10 ? styles.badgeDanger : styles.badgeSuccess}`}>
+                                                            {producto.stock < 10 ? 'Crítico' : 'Normal'}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <div className={styles.emptyState}>
+                        <h2>
+                            {activeMenu === 'inventory' && 'Inventario'}
+                            {activeMenu === 'sales' && 'Ventas'}
+                            {activeMenu === 'reports' && 'Reportes'}
+                            {activeMenu === 'settings' && 'Configuración'}
+                        </h2>
+                        <p>Módulo en desarrollo</p>
                     </div>
                 )}
             </main>
+
+            {/* Product Modal */}
+            <ProductModal 
+                isOpen={showProductModal} 
+                onClose={() => setShowProductModal(false)}
+                onRefresh={handleRefreshProducts}
+            />
         </div>
     );
 };
@@ -272,8 +314,8 @@ const MenuItem = ({ icon, text, active, danger, onClick }) => (
 );
 
 // KPI Card Component
-const KPICard = ({ icon, title, value, trend, trendUp, iconBg }) => (
-    <div className={styles.kpiCard}>
+const KPICard = ({ icon, title, value, trend, trendUp, iconBg, onClick }) => (
+    <div className={styles.kpiCard} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
         <div className={styles.kpiHeader}>
             <div className={styles.kpiIcon} style={{ background: `rgba(${iconBg === 'var(--primary)' ? '6, 182, 212' : iconBg === 'var(--accent)' ? '8, 145, 178' : '239, 68, 68'}, 0.1)`, color: iconBg }}>
                 {icon}
@@ -288,7 +330,7 @@ const KPICard = ({ icon, title, value, trend, trendUp, iconBg }) => (
     </div>
 );
 
-// Chart Data (dummy data for demo)
+// Chart Data
 const salesChartData = {
     labels: ['10am', '11am', '12pm', '1pm', '2pm', '3pm'],
     datasets: [{
