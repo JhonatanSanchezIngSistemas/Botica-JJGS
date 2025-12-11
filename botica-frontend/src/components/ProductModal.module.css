@@ -1,0 +1,246 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background: var(--dark-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky;
+    top: 0;
+    background: var(--dark-surface);
+}
+
+.modalHeader h2 {
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 24px;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.closeBtn:hover {
+    color: var(--text-primary);
+}
+
+.alert {
+    padding: 12px 24px;
+    margin: 16px 24px 0;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btnNew {
+    margin: 16px 24px;
+    padding: 10px 20px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all var(--transition-fast);
+}
+
+.btnNew:hover {
+    background: var(--primary-glow);
+    transform: translateY(-2px);
+}
+
+.tableContainer {
+    padding: 24px;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead {
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.table th {
+    text-align: left;
+    padding: 12px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+}
+
+.table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btnEdit,
+.btnDelete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all var(--transition-fast);
+    font-size: 16px;
+}
+
+.btnEdit {
+    color: #06b6d4;
+}
+
+.btnEdit:hover {
+    background: rgba(6, 182, 212, 0.1);
+}
+
+.btnDelete {
+    color: #ef4444;
+}
+
+.btnDelete:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.loading {
+    padding: 40px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.form {
+    padding: 24px;
+}
+
+.formGroup {
+    margin-bottom: 16px;
+}
+
+.formGroup label {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+    width: 100%;
+    background: var(--dark-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: border var(--transition-fast);
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.formActions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--glass-border);
+}
+
+.btnSave {
+    flex: 1;
+    padding: 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+}
+
+.btnSave:hover {
+    background: var(--primary-glow);
+}
+
+.btnCancel {
+    flex: 1;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+}
+
+.btnCancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 600px) {
+    .modalContent {
+        width: 95%;
+    }
+
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .formActions {
+        flex-direction: column;
+    }
+}

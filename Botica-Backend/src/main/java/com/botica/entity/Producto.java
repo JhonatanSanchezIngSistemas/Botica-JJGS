@@ -15,4 +15,5 @@ public class Producto {
     private Double precio;
     private Integer stock;
     private String descripcion;
+    private String categoria; // Categoría del producto (Farmacia, Cuidado Personal, etc.)
 }

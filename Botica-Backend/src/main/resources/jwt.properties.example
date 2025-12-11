@@ -1,0 +1,15 @@
+# JWT Configuration Properties
+# This file documents custom JWT properties used in the application
+
+# JWT Secret Key - Used for signing and validating tokens
+# IMPORTANT: Change this in production and use environment variables
+jwt.secret=3ncApB0t!2025#JWT$SecureAuth@K3y*M3d1c4l&Ph4rM4CyS0ft_W4r3^R4nD0m&H1ghEntr0py!BoticaJJGS
+
+# JWT Token Expiration Time in milliseconds
+# 86400000 ms = 24 hours
+# Common values:
+#   3600000    = 1 hour
+#   43200000   = 12 hours  
+#   86400000   = 24 hours (default)
+#   604800000  = 7 days
+jwt.expiration.ms=86400000

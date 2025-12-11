@@ -42,7 +42,7 @@ public class DataInitializer implements CommandLineRunner {
         if (!usuarioRepository.existsByUsername("admin")) {
             Usuario admin = new Usuario();
             admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin123"));
+            admin.setPassword(passwordEncoder.encode("123456"));
             admin.setEmail("admin@botica.com");
 
             Set<Role> roles = new HashSet<>();
@@ -50,7 +50,7 @@ public class DataInitializer implements CommandLineRunner {
             admin.setRoles(roles);
 
             usuarioRepository.save(admin);
-            System.out.println("Usuario admin creado: username=admin, password=admin123");
+            System.out.println("Usuario admin creado: username=admin, password=123456");
         }
 
         if (!usuarioRepository.existsByUsername("user")) {

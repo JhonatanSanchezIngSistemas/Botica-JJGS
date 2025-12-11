@@ -12,6 +12,7 @@ public class Role {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "name", nullable = false, length = 20)
     private ERole name;
 
     public enum ERole {

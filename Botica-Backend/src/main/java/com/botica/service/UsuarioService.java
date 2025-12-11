@@ -12,15 +12,15 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public Optional<Usuario> buscarPorUsername(String username) {
+    public Optional<Usuario> buscarPorUsername(@org.springframework.lang.NonNull String username) {
         return usuarioRepository.findByUsername(username);
     }
 
-    public Usuario guardar(Usuario usuario) {
+    public Usuario guardar(@org.springframework.lang.NonNull Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
 
-    public Boolean existePorUsername(String username) {
+    public Boolean existePorUsername(@org.springframework.lang.NonNull String username) {
         return usuarioRepository.existsByUsername(username);
     }
 }

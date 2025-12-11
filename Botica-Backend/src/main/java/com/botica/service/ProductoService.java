@@ -17,15 +17,15 @@ public class ProductoService {
         return productoRepository.findAll();
     }
 
-    public Producto guardar(Producto producto) {
+    public Producto guardar(@org.springframework.lang.NonNull Producto producto) {
         return productoRepository.save(producto);
     }
 
-    public Optional<Producto> obtenerPorId(Long id) {
+    public Optional<Producto> obtenerPorId(@org.springframework.lang.NonNull Long id) {
         return productoRepository.findById(id);
     }
 
-    public void eliminar(Long id) {
+    public void eliminar(@org.springframework.lang.NonNull Long id) {
         productoRepository.deleteById(id);
     }
 }

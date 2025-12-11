@@ -1,58 +1,124 @@
 import React, { useState } from 'react';
-import api from '../services/api';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { FiLock, FiUser, FiAlertCircle } from 'react-icons/fi';
+import { useAuth } from '../context/AuthContext';
+import Button from '../components/ui/Button/Button';
+import styles from './LoginPage.module.css';
 
 const LoginPage = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [credentials, setCredentials] = useState({ username: '', password: '' });
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        try {
-            const response = await api.post('/auth/login', { username, password });
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('user', JSON.stringify(response.data.username));
+        setError('');
+        setLoading(true);
 
-            Swal.fire({
-                icon: 'success',
-                title: '¡Bienvenido!',
-                timer: 1500,
-                showConfirmButton: false
-            });
-            navigate('/dashboard');
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error de Acceso',
-                text: 'Usuario o contraseña incorrectos',
-                confirmButtonColor: '#0056b3'
-            });
+        try {
+            const result = await login(credentials.username, credentials.password);
+
+            if (result.success) {
+                navigate('/dashboard');
+            } else {
+                setError(result.error || 'Usuario o contraseña incorrectos');
+            }
+        } catch (err) {
+            setError('Error de conexión con el servidor');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center vh-100" style={{ backgroundColor: '#f8f9fa' }}>
-            <div className="card shadow-lg" style={{ width: '400px', borderRadius: '15px' }}>
-                <div className="card-header text-white text-center py-3" style={{ backgroundColor: '#0056b3', borderTopLeftRadius: '15px', borderTopRightRadius: '15px' }}>
-                    <h4 className="mb-0">Botica JJGS</h4>
-                    <small>Acceso al Sistema</small>
+        <div className={styles.loginContainer}>
+            <motion.div
+                className={styles.loginBox}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+            >
+                <div className={styles.brandIcon}>
+                    <FiLock size={32} />
                 </div>
-                <div className="card-body p-4">
-                    <form onSubmit={handleLogin}>
-                        <div className="mb-3">
-                            <label className="form-label fw-bold" style={{ color: '#0056b3' }}>Usuario</label>
-                            <input type="text" className="form-control" value={username} onChange={(e) => setUsername(e.target.value)} required />
+
+                <h2>Acceso Seguro</h2>
+                <p className={styles.subtitle}>Identifícate para entrar al sistema</p>
+
+                {error && (
+                    <motion.div
+                        className={styles.errorBox}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        <FiAlertCircle />
+                        <span>{error}</span>
+                    </motion.div>
+                )}
+
+                <form onSubmit={handleLogin} className={styles.form}>
+                    <div className={styles.inputGroup}>
+                        <label>Usuario</label>
+                        <div className={styles.inputWrapper}>
+                            <FiUser className={styles.inputIcon} />
+                            <input
+                                type="text"
+                                value={credentials.username}
+                                onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                                placeholder="Ingresa tu usuario"
+                                className={styles.input}
+                                required
+                                disabled={loading}
+                            />
                         </div>
-                        <div className="mb-3">
-                            <label className="form-label fw-bold" style={{ color: '#0056b3' }}>Contraseña</label>
-                            <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                        <label>Contraseña</label>
+                        <div className={styles.inputWrapper}>
+                            <FiLock className={styles.inputIcon} />
+                            <input
+                                type="password"
+                                value={credentials.password}
+                                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                                placeholder="••••••••"
+                                className={styles.input}
+                                required
+                                disabled={loading}
+                            />
                         </div>
-                        <button type="submit" className="btn w-100 text-white fw-bold" style={{ backgroundColor: '#28a745' }}>INGRESAR</button>
-                    </form>
+                    </div>
+
+                    <Button
+                        variant="primary"
+                        size="lg"
+                        glow
+                        type="submit"
+                        style={{ width: '100%', marginTop: '16px' }}
+                        disabled={loading}
+                    >
+                        {loading ? 'Iniciando sesión...' : 'Ingresar al Dashboard'}
+                    </Button>
+                </form>
+
+                <div className={styles.loginFooter}>
+                    <p className={styles.hint}>
+                        💡 Credenciales de prueba: <br />
+                        <strong>admin</strong> / <strong>123456</strong>
+                    </p>
                 </div>
-            </div>
+
+                <button
+                    className={styles.backButton}
+                    onClick={() => navigate('/')}
+                    disabled={loading}
+                >
+                    ← Volver al inicio
+                </button>
+            </motion.div>
         </div>
     );
 };

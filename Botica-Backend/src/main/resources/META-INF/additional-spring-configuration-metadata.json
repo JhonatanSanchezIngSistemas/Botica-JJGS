@@ -1,0 +1,17 @@
+{
+    "properties": [
+        {
+            "name": "jwt.secret",
+            "type": "java.lang.String",
+            "description": "Secret key for JWT token signing and validation. Should be a strong, random string with high entropy.",
+            "sourceType": "com.botica.config.JwtProperties"
+        },
+        {
+            "name": "jwt.expiration.ms",
+            "type": "java.lang.Long",
+            "description": "JWT token expiration time in milliseconds. Default is 86400000 (24 hours).",
+            "sourceType": "com.botica.config.JwtProperties",
+            "defaultValue": 86400000
+        }
+    ]
+}

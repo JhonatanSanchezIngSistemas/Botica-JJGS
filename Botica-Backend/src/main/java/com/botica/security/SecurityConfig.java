@@ -11,11 +11,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
+@EnableMethodSecurity // Habilita @PreAuthorize para seguridad basada en roles
 public class SecurityConfig {
 
     @Bean
@@ -24,6 +26,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @SuppressWarnings("deprecation")
     public DaoAuthenticationProvider authenticationProvider(UserDetailsServiceImpl userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
@@ -47,10 +50,17 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        // definir el origen del frontend react
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        // definir el origen del frontend react - usar addAllowedOriginPattern en Spring
+        // Boot 3
+        config.addAllowedOriginPattern("http://localhost:3000");
+        config.addAllowedOriginPattern("http://localhost:3001");
+        config.addAllowedHeader("Content-Type");
+        config.addAllowedHeader("Authorization");
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("OPTIONS");
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
@@ -58,15 +68,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
+                .cors(cors -> {
+                })
                 // manejo de sesiones sin estado (stateless)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // rutas publicas
+                        // rutas publicas - IMPORTANTE: permitir acceso sin autenticación
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/contacto").permitAll()
+                        .requestMatchers("/error").permitAll()
                         // el resto requiere autenticacion
                         .anyRequest().authenticated());
 
+        // CRÍTICO: Agregar JWT filter SOLO para rutas protegidas
+        // NO aplicar a /auth/** para permitir login sin token
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
