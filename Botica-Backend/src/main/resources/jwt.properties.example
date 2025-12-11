@@ -13,3 +13,6 @@ jwt.secret=3ncApB0t!2025#JWT$SecureAuth@K3y*M3d1c4l&Ph4rM4CyS0ft_W4r3^R4nD0m&H1g
 #   86400000   = 24 hours (default)
 #   604800000  = 7 days
 jwt.expiration.ms=86400000
+
+
+asdasd

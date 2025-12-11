@@ -32,7 +32,6 @@ const ProductModal = ({ isOpen, onClose, onRefresh }) => {
             setError('');
         } catch (err) {
             setError('Error cargando productos: ' + err.message);
-            console.error(err);
         } finally {
             setLoading(false);
         }
@@ -89,7 +88,6 @@ const ProductModal = ({ isOpen, onClose, onRefresh }) => {
             if (onRefresh) onRefresh();
         } catch (err) {
             setError('Error al guardar: ' + err.message);
-            console.error(err);
         }
     };
 

@@ -1,4 +1,5 @@
 import api from './api';
+import logger from '../utils/logger';
 
 /**
  * Servicio de Autenticación
@@ -44,14 +45,12 @@ const login = async (username, password) => {
                 };
                 localStorage.setItem('user', JSON.stringify(userData));
 
-                console.log('✅ Login exitoso (Backend). Token guardado en localStorage');
-                console.log('👤 Usuario:', userData);
+
             }
 
             return response.data;
         } catch (backendError) {
             // Si el backend falla, usar modo DEMO
-            console.warn('⚠️ Backend no disponible, usando MODO DEMO');
             
             if (username === 'admin' && password === '123456') {
                 const mockUser = MOCK_USERS.admin;
@@ -63,8 +62,7 @@ const login = async (username, password) => {
                     roles: mockUser.roles
                 }));
                 
-                console.log('✅ Login exitoso (MODO DEMO - Admin)');
-                console.log('👤 Usuario:', mockUser.username);
+
                 
                 return {
                     token: mockUser.token,
@@ -83,8 +81,8 @@ const login = async (username, password) => {
                     roles: mockUser.roles
                 }));
                 
-                console.log('✅ Login exitoso (MODO DEMO - User)');
-                console.log('👤 Usuario:', mockUser.username);
+                logger.log('✅ Login exitoso (MODO DEMO - User)');
+                logger.log('👤 Usuario:', mockUser.username);
                 
                 return {
                     token: mockUser.token,

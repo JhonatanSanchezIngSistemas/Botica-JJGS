@@ -13,7 +13,6 @@ const getProductos = async () => {
         const response = await api.get('/api/productos');
         return response.data;
     } catch (error) {
-        console.error('Error obteniendo productos:', error);
         throw error;
     }
 };
@@ -26,7 +25,6 @@ const getProducto = async (id) => {
         const response = await api.get(`/api/productos/${id}`);
         return response.data;
     } catch (error) {
-        console.error('Error obteniendo producto:', error);
         throw error;
     }
 };
@@ -39,7 +37,6 @@ const searchProductos = async (query) => {
         const response = await api.get(`/api/productos/search?q=${query}`);
         return response.data;
     } catch (error) {
-        console.error('Error buscando productos:', error);
         throw error;
     }
 };
@@ -52,7 +49,7 @@ const getStockBajo = async () => {
         const response = await api.get('/api/productos/stock/bajo');
         return response.data;
     } catch (error) {
-        console.error('Error obteniendo stock bajo:', error);
+        logger.error('Error obteniendo stock bajo:', error);
         throw error;
     }
 };
@@ -65,7 +62,6 @@ const createProducto = async (producto) => {
         const response = await api.post('/api/productos', producto);
         return response.data;
     } catch (error) {
-        console.error('Error creando producto:', error);
         throw error;
     }
 };
@@ -78,7 +74,6 @@ const updateProducto = async (id, producto) => {
         const response = await api.put(`/api/productos/${id}`, producto);
         return response.data;
     } catch (error) {
-        console.error('Error actualizando producto:', error);
         throw error;
     }
 };
@@ -90,7 +85,6 @@ const deleteProducto = async (id) => {
     try {
         await api.delete(`/api/productos/${id}`);
     } catch (error) {
-        console.error('Error eliminando producto:', error);
         throw error;
     }
 };

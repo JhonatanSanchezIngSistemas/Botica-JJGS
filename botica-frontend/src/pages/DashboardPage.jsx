@@ -75,7 +75,7 @@ const DashboardPage = () => {
                 totalProductos: data.totalProductos || 0
             });
         } catch (error) {
-            console.error('Error loading stats:', error);
+            logger.error('Error loading stats:', error);
         }
     };
 
@@ -91,7 +91,7 @@ const DashboardPage = () => {
 
             setLoading(false);
         } catch (error) {
-            console.error('Error loading productos:', error);
+            // Error loading productos
             setLoading(false);
         }
     };
