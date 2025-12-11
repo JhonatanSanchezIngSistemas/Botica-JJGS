@@ -31,6 +31,7 @@ import { useAuth } from '../context/AuthContext';
 import ProductoService from '../services/product.service';
 import DashboardService from '../services/dashboard.service';
 import ProductModal from '../components/ProductModal';
+import logger from '../utils/logger';
 import styles from './DashboardPage.module.css';
 
 // Register Chart.js components
