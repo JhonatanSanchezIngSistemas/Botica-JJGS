@@ -6,6 +6,7 @@
 - [x] Add `spring-retry` and `spring-aspects` dependencies to `pom.xml`
 
 ## Next Steps
+- [x] Fix circular dependency by adding `spring.main.allow-circular-references=true` to application-prod.properties
 - [ ] Deploy the application to Railway with `SPRING_PROFILES_ACTIVE=prod`
 - [ ] Verify that the environment variables are set correctly in Railway:
   - MYSQLHOST=mysql.railway.internal
