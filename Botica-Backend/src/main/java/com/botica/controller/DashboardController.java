@@ -3,12 +3,16 @@ package com.botica.controller;
 import com.botica.dto.ChartDataDTO;
 import com.botica.dto.DashboardStatsDTO;
 import com.botica.entity.Producto;
+import com.botica.entity.Venta;
 import com.botica.repository.ProductoRepository;
+import com.botica.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,11 +25,13 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api/dashboard")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class DashboardController {
 
     @Autowired
     private ProductoRepository productoRepository;
+
+    @Autowired
+    private VentaRepository ventaRepository;
 
     /**
      * Obtener estadísticas generales del dashboard
@@ -43,10 +49,26 @@ public class DashboardController {
                     .filter(p -> p.getStock() < 10)
                     .count();
 
-            // Simular ventas del día (en Release 3.0 se conectará con tabla Ventas)
-            BigDecimal ventasHoy = new BigDecimal("1250.50");
-            Integer pedidosHoy = 15;
-            Double crecimiento = 12.5;
+            // Obtener ventas REALES de hoy
+            List<Venta> todasVentas = ventaRepository.findAll();
+            String fechaHoy = java.time.LocalDate.now().toString(); // formato "2025-12-11"
+
+            // Filtrar ventas de hoy (fecha comienza con hoy)
+            List<Venta> ventasDeHoy = todasVentas.stream()
+                    .filter(v -> v.getFecha() != null && v.getFecha().startsWith(fechaHoy))
+                    .collect(Collectors.toList());
+
+            // Calcular total de ventas de hoy
+            Double totalVentas = ventasDeHoy.stream()
+                    .mapToDouble(v -> v.getTotal() != null ? v.getTotal() : 0.0)
+                    .sum();
+            BigDecimal ventasHoy = BigDecimal.valueOf(totalVentas);
+
+            // Contar pedidos de hoy
+            Integer pedidosHoy = ventasDeHoy.size();
+
+            // Crecimiento (0 por ahora)
+            Double crecimiento = 0.0;
 
             DashboardStatsDTO stats = new DashboardStatsDTO(
                     ventasHoy,

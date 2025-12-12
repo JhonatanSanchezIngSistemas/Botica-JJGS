@@ -52,6 +52,27 @@ const ProductForm = ({ nuevoProducto, handleChange, handleSubmit }) => {
                         />
                     </div>
                     <div className="col-md-2">
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="unidad"
+                            placeholder="Unidad (ej: tabletas, ml, g)"
+                            value={nuevoProducto.unidad || ''}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="col-md-2">
+                        <input
+                            type="number"
+                            className="form-control"
+                            name="gramos"
+                            placeholder="Gramos/Miligramos"
+                            value={nuevoProducto.gramos || ''}
+                            onChange={handleChange}
+                            step="0.01"
+                        />
+                    </div>
+                    <div className="col-md-2">
                         <button type="submit" className="btn btn-primary w-100">Agregar</button>
                     </div>
                 </form>

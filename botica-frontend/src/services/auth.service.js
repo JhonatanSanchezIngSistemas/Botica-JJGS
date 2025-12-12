@@ -4,27 +4,7 @@ import logger from '../utils/logger';
 /**
  * Servicio de Autenticación
  * Maneja login, logout y validación de sesión
- * 
- * MODO DEMO: Si el backend no responde, usa datos mock
  */
-
-// Datos mock para testing sin backend
-const MOCK_USERS = {
-    'admin': {
-        id: 1,
-        username: 'admin',
-        email: 'admin@botica.com',
-        roles: [{ id: 1, name: 'ADMIN' }],
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwMjMyMDAwMH0.mock_token_admin'
-    },
-    'user': {
-        id: 2,
-        username: 'user',
-        email: 'user@botica.com',
-        roles: [{ id: 2, name: 'USER' }],
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzAyMzIwMDAwfQ.mock_token_user'
-    }
-};
 
 const login = async (username, password) => {
     try {
@@ -32,57 +12,21 @@ const login = async (username, password) => {
         if (response.data.token) {
             // Guardar token
             localStorage.setItem('token', response.data.token);
-            // Guardar usuario completo (id, username, email, roles)
+            // Guardar usuario completo (id, username, email, roles, botica)
             const userData = {
                 id: response.data.id,
                 username: response.data.username,
                 email: response.data.email,
-                roles: response.data.roles || []
+                roles: response.data.roles || [],
+                botica: response.data.botica || null
             };
             localStorage.setItem('user', JSON.stringify(userData));
-            logger.log('Token guardado en localStorage');
+            logger.log('✅ Login exitoso');
         }
         return response.data;
-    } catch (backendError) {
-        // Si el backend falla, usar modo DEMO
-        if (username === 'admin' && password === '123456') {
-            const mockUser = MOCK_USERS.admin;
-            localStorage.setItem('token', mockUser.token);
-            localStorage.setItem('user', JSON.stringify({
-                id: mockUser.id,
-                username: mockUser.username,
-                email: mockUser.email,
-                roles: mockUser.roles
-            }));
-            return {
-                token: mockUser.token,
-                id: mockUser.id,
-                username: mockUser.username,
-                email: mockUser.email,
-                roles: mockUser.roles
-            };
-        } else if (username === 'user' && password === '123456') {
-            const mockUser = MOCK_USERS.user;
-            localStorage.setItem('token', mockUser.token);
-            localStorage.setItem('user', JSON.stringify({
-                id: mockUser.id,
-                username: mockUser.username,
-                email: mockUser.email,
-                roles: mockUser.roles
-            }));
-            logger.log('✅ Login exitoso (MODO DEMO - User)');
-            logger.log('👤 Usuario:', mockUser.username);
-            return {
-                token: mockUser.token,
-                id: mockUser.id,
-                username: mockUser.username,
-                email: mockUser.email,
-                roles: mockUser.roles
-            };
-        } else {
-            logger.error('❌ Error en login:', backendError.message);
-            throw new Error('Credenciales inválidas. Prueba: admin/123456 o user/123456');
-        }
+    } catch (error) {
+        logger.error('❌ Error en login:', error.message);
+        throw new Error(error.response?.data?.message || 'Credenciales inválidas');
     }
 };
 

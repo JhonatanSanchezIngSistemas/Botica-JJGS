@@ -28,10 +28,12 @@ const ProductModal = ({ isOpen, onClose, onRefresh }) => {
         setLoading(true);
         try {
             const response = await ProductService.getProductos();
-            setProductos(response.data);
+            const data = Array.isArray(response?.data) ? response.data : [];
+            setProductos(data);
             setError('');
         } catch (err) {
             setError('Error cargando productos: ' + err.message);
+            setProductos([]);
         } finally {
             setLoading(false);
         }
@@ -50,9 +52,9 @@ const ProductModal = ({ isOpen, onClose, onRefresh }) => {
         setError('');
         setSuccess('');
 
-        // Validación
-        if (!formData.nombre || !formData.precio || !formData.stock) {
-            setError('Por favor completa los campos requeridos');
+        // Validación - TODOS los campos obligatorios incluyendo categoría
+        if (!formData.nombre || !formData.precio || !formData.stock || !formData.categoria) {
+            setError('Por favor completa todos los campos obligatorios (nombre, precio, stock, categoría)');
             return;
         }
 
@@ -170,14 +172,14 @@ const ProductModal = ({ isOpen, onClose, onRefresh }) => {
                                                 <td>S/ {producto.precio.toFixed(2)}</td>
                                                 <td>{producto.stock}</td>
                                                 <td className={styles.actions}>
-                                                    <button 
+                                                    <button
                                                         className={styles.btnEdit}
                                                         onClick={() => handleEdit(producto)}
                                                         title="Editar"
                                                     >
                                                         <FiEdit2 />
                                                     </button>
-                                                    <button 
+                                                    <button
                                                         className={styles.btnDelete}
                                                         onClick={() => handleDelete(producto.id)}
                                                         title="Eliminar"

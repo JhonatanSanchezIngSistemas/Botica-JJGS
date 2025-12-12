@@ -3,7 +3,9 @@ package com.botica.controller;
 import com.botica.dto.LoginRequest;
 import com.botica.dto.LoginResponse;
 import com.botica.dto.UsuarioDTO;
+import com.botica.entity.Botica;
 import com.botica.entity.Usuario;
+import com.botica.repository.BoticaRepository;
 import com.botica.repository.UsuarioRepository;
 import com.botica.security.JwtUtil;
 import jakarta.validation.Valid;
@@ -27,95 +29,112 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+        @Autowired
+        private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+        @Autowired
+        private JwtUtil jwtUtil;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+        @Autowired
+        private UsuarioRepository usuarioRepository;
 
-    /**
-     * Login endpoint
-     * 
-     * @param loginRequest username y password
-     * @return JWT token y datos del usuario
-     */
-    @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        log.info("intento de login para usuario: {}", loginRequest.getUsername());
-        
-        // Autenticar usuario
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()));
+        @Autowired
+        private BoticaRepository boticaRepository;
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        /**
+         * Login endpoint
+         * 
+         * @param loginRequest username y password
+         * @return JWT token y datos del usuario
+         */
+        @PostMapping("/login")
+        public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+                log.info("intento de login para usuario: {}", loginRequest.getUsername());
 
-        // Generar JWT token
-        String jwt = jwtUtil.generateJwtToken(authentication);
+                // Autenticar usuario
+                Authentication authentication = authenticationManager.authenticate(
+                                new UsernamePasswordAuthenticationToken(
+                                                loginRequest.getUsername(),
+                                                loginRequest.getPassword()));
 
-        // Obtener datos del usuario
-        Usuario usuario = usuarioRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> {
-                    log.error("usuario no encontrado despues de autenticacion: {}", loginRequest.getUsername());
-                    return new RuntimeException("usuario no encontrado");
-                });
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Extraer roles
-        java.util.List<String> roles = usuario.getRoles().stream()
-                .map(role -> role.getName().name())
-                .collect(Collectors.toList());
+                // Generar JWT token
+                String jwt = jwtUtil.generateJwtToken(authentication);
 
-        // Crear respuesta con DTO sin password
-        LoginResponse response = LoginResponse.builder()
-                .token(jwt)
-                .type("Bearer")
-                .id(usuario.getId())
-                .username(usuario.getUsername())
-                .email(usuario.getEmail())
-                .roles(roles)
-                .build();
+                // Obtener datos del usuario
+                Usuario usuario = usuarioRepository.findByUsername(loginRequest.getUsername())
+                                .orElseThrow(() -> {
+                                        log.error("usuario no encontrado despues de autenticacion: {}",
+                                                        loginRequest.getUsername());
+                                        return new RuntimeException("usuario no encontrado");
+                                });
 
-        log.info("login exitoso para usuario: {}", loginRequest.getUsername());
-        return ResponseEntity.ok(response);
-    }
+                // Verificar si el usuario está bloqueado
+                if (Boolean.TRUE.equals(usuario.getBloqueado())) {
+                        log.warn("intentó login usuario bloqueado: {}", usuario.getUsername());
+                        return ResponseEntity.status(403).body(java.util.Map.of(
+                                        "bloqueado", true,
+                                        "motivoBloqueo", usuario.getMotivoBloqueo() != null ? usuario.getMotivoBloqueo()
+                                                        : "Usuario bloqueado por falta de pago"));
+                }
 
-    /**
-     * Obtener usuario actual desde el token
-     * 
-     * @return Datos del usuario autenticado
-     */
-    @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+                // Extraer roles
+                java.util.List<String> roles = usuario.getRoles().stream()
+                                .map(role -> role.getName().name())
+                                .collect(Collectors.toList());
 
-        log.debug("obteniendo datos de usuario actual: {}", username);
+                // Obtener datos de la botica si existe (deshabilitado temporalmente)
+                // TODO: Habilitar cuando la tabla boticas esté creada
+                LoginResponse.BoticaInfo boticaInfo = null;
 
-        Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElseThrow(() -> {
-                    log.error("usuario autenticado no encontrado en base de datos: {}", username);
-                    return new RuntimeException("usuario no encontrado");
-                });
+                // Crear respuesta con DTO sin password
+                LoginResponse response = LoginResponse.builder()
+                                .token(jwt)
+                                .type("Bearer")
+                                .id(usuario.getId())
+                                .username(usuario.getUsername())
+                                .email(usuario.getEmail())
+                                .roles(roles)
+                                .botica(boticaInfo)
+                                .build();
 
-        java.util.List<String> roles = usuario.getRoles().stream()
-                .map(role -> role.getName().name())
-                .collect(Collectors.toList());
+                log.info("login exitoso para usuario: {}", loginRequest.getUsername());
+                return ResponseEntity.ok(response);
+        }
 
-        // Retornar DTO sin password
-        UsuarioDTO usuarioDTO = UsuarioDTO.builder()
-                .id(usuario.getId())
-                .username(usuario.getUsername())
-                .email(usuario.getEmail())
-                .roles(roles)
-                .build();
+        /**
+         * Obtener usuario actual desde el token
+         * 
+         * @return Datos del usuario autenticado
+         */
+        @GetMapping("/me")
+        public ResponseEntity<?> getCurrentUser() {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String username = authentication.getName();
 
-        return ResponseEntity.ok(usuarioDTO);
-    }
+                log.debug("obteniendo datos de usuario actual: {}", username);
+
+                Usuario usuario = usuarioRepository.findByUsername(username)
+                                .orElseThrow(() -> {
+                                        log.error("usuario autenticado no encontrado en base de datos: {}", username);
+                                        return new RuntimeException("usuario no encontrado");
+                                });
+
+                java.util.List<String> roles = usuario.getRoles().stream()
+                                .map(role -> role.getName().name())
+                                .collect(Collectors.toList());
+
+                // Retornar DTO sin password
+                UsuarioDTO usuarioDTO = UsuarioDTO.builder()
+                                .id(usuario.getId())
+                                .username(usuario.getUsername())
+                                .email(usuario.getEmail())
+                                .roles(roles)
+                                .build();
+
+                return ResponseEntity.ok(usuarioDTO);
+        }
 }

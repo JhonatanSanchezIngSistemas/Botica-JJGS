@@ -1,0 +1,33 @@
+.ventasPage {
+  padding: 2rem;
+}
+.dniSearchBar {
+  margin-bottom: 1rem;
+}
+.productosList button {
+  margin: 0.25rem;
+  padding: 0.5rem 1rem;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.voucher {
+  background: #f1f5f9;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 6px;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.table th, .table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 1rem;
+  text-align: left;
+}
+.table th {
+  background: #f1f5f9;
+}

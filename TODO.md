@@ -1,18 +1,12 @@
-# TODO: Fix MySQL Connection Issue on Railway
+# TODO: Implementar Multi-Tenant y Mostrar Todos los Campos en ProductTable
 
-## Completed Tasks
-- [x] Configure `application-prod.properties` with Railway environment variables
-- [x] Add retry logic for database connection in `DatabaseConfig.java`
-- [x] Add `spring-retry` and `spring-aspects` dependencies to `pom.xml`
+## Pasos a Realizar
 
-## Next Steps
-- [x] Fix circular dependency by adding `spring.main.allow-circular-references=true` to application-prod.properties
-- [ ] Deploy the application to Railway with `SPRING_PROFILES_ACTIVE=prod`
-- [ ] Verify that the environment variables are set correctly in Railway:
-  - MYSQLHOST=mysql.railway.internal
-  - MYSQLPORT=3306
-  - MYSQL_DATABASE=railway
-  - MYSQLUSER=root
-  - MYSQLPASSWORD=PHGGpmoqoKNyWwlIyLiqcruXUmfMSuEY
-- [ ] Test the connection using `nc -vz mysql.railway.internal 3306` from the container
-- [ ] Monitor the application logs for successful database connection
+- [ ] Agregar columna "Categoría" a ProductTable.jsx para mostrar todos los campos del producto
+- [ ] Agregar campo botica_id a la entidad Producto
+- [ ] Agregar campo botica_id a la entidad Usuario
+- [ ] Modificar ProductoRepository para incluir métodos que filtren por botica_id
+- [ ] Actualizar ProductoController para extraer botica_id del JWT y filtrar consultas de productos
+- [ ] Actualizar JwtUtil para incluir botica_id en el JWT (si es necesario)
+- [ ] Actualizar esquema de base de datos para incluir columnas botica_id
+- [ ] Probar filtrado multi-tenant y visualización en frontend
