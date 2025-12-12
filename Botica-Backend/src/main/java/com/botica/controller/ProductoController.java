@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/api/productos")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class ProductoController {
 
     @Autowired
@@ -56,8 +55,8 @@ public class ProductoController {
     public ResponseEntity<List<ProductoDTO>> buscarPorNombre(@RequestParam String q) {
         log.debug("buscando productos con query: {}", q);
         List<ProductoDTO> filtrados = productoService.listarTodos().stream()
-                .filter(p -> p.getNombre() != null && 
-                           p.getNombre().toLowerCase().contains(q.toLowerCase()))
+                .filter(p -> p.getNombre() != null &&
+                        p.getNombre().toLowerCase().contains(q.toLowerCase()))
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(filtrados);
@@ -94,16 +93,17 @@ public class ProductoController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductoDTO> crear(@Valid @RequestBody ProductoRequestDTO productoRequest) {
         log.info("creando nuevo producto: {}", productoRequest.getNombre());
-        
+
         Producto producto = new Producto();
         producto.setNombre(productoRequest.getNombre());
         producto.setPrecio(productoRequest.getPrecio());
         producto.setStock(productoRequest.getStock());
         producto.setDescripcion(productoRequest.getDescripcion());
-        
+        producto.setCategoria(productoRequest.getCategoria()); // Agregar categoría
+
         Producto nuevo = productoService.guardar(producto);
         log.info("producto creado exitosamente con id: {}", nuevo.getId());
-        
+
         return ResponseEntity.status(HttpStatus.CREATED).body(convertirADTO(nuevo));
     }
 
@@ -112,20 +112,21 @@ public class ProductoController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductoDTO> actualizar(@PathVariable Long id, 
-                                                   @Valid @RequestBody ProductoRequestDTO productoRequest) {
+    public ResponseEntity<ProductoDTO> actualizar(@PathVariable Long id,
+            @Valid @RequestBody ProductoRequestDTO productoRequest) {
         log.info("actualizando producto con id: {}", id);
-        
+
         return productoService.obtenerPorId(id)
                 .map(existente -> {
                     existente.setNombre(productoRequest.getNombre());
                     existente.setPrecio(productoRequest.getPrecio());
                     existente.setStock(productoRequest.getStock());
                     existente.setDescripcion(productoRequest.getDescripcion());
-                    
+                    existente.setCategoria(productoRequest.getCategoria());
+
                     Producto actualizado = productoService.guardar(existente);
                     log.info("producto actualizado exitosamente: {}", id);
-                    
+
                     return ResponseEntity.ok(convertirADTO(actualizado));
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -138,13 +139,13 @@ public class ProductoController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         log.info("eliminando producto con id: {}", id);
-        
+
         if (productoService.obtenerPorId(id).isPresent()) {
             productoService.eliminar(id);
             log.info("producto eliminado exitosamente: {}", id);
             return ResponseEntity.noContent().build();
         }
-        
+
         log.warn("intento de eliminar producto no existente: {}", id);
         return ResponseEntity.notFound().build();
     }
@@ -159,6 +160,7 @@ public class ProductoController {
                 .precio(producto.getPrecio())
                 .stock(producto.getStock())
                 .descripcion(producto.getDescripcion())
+                .categoria(producto.getCategoria())
                 .build();
     }
 }

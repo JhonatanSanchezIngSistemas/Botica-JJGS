@@ -30,12 +30,16 @@ const Navbar = () => {
       <div className="navbar-container">
         {/* Logo */}
         <Link to="/" className="navbar-logo">
-          <span className="logo-icon">💊</span>
+          <img
+            src="/logo-encapbot.png"
+            alt="Encapbot Logo"
+            className="logo-icon"
+          />
           ENCAPBOT
         </Link>
 
         {/* Hamburger Menu */}
-        <div 
+        <div
           className={`hamburger ${isMenuOpen ? 'active' : ''}`}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
@@ -49,22 +53,22 @@ const Navbar = () => {
           <div className="navbar-items">
             {location.pathname === '/' ? (
               <>
-                <a 
-                  href="#caracteristicas" 
+                <a
+                  href="#caracteristicas"
                   className="nav-link"
                   onClick={() => handleNavClick('caracteristicas')}
                 >
                   Características
                 </a>
-                <a 
-                  href="#precios" 
+                <a
+                  href="#precios"
                   className="nav-link"
                   onClick={() => handleNavClick('precios')}
                 >
                   Precios
                 </a>
-                <a 
-                  href="#contacto" 
+                <a
+                  href="#contacto"
                   className="nav-link"
                   onClick={() => handleNavClick('contacto')}
                 >
@@ -73,8 +77,8 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link 
-                  to="/" 
+                <Link
+                  to="/"
                   className="nav-link"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -91,14 +95,14 @@ const Navbar = () => {
                 <div className="user-info">
                   <span className="username">{user?.username || 'Usuario'}</span>
                 </div>
-                <Link 
-                  to="/dashboard" 
+                <Link
+                  to="/dashboard"
                   className={`nav-btn ${isActive('/dashboard') ? 'active' : ''}`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Dashboard
                 </Link>
-                <button 
+                <button
                   className="nav-btn logout-btn"
                   onClick={handleLogout}
                 >
@@ -107,8 +111,8 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/login"
                   className={`nav-btn ${isActive('/login') ? 'active' : ''}`}
                   onClick={() => setIsMenuOpen(false)}
                 >

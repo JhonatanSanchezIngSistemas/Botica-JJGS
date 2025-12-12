@@ -116,6 +116,26 @@
     cursor: not-allowed;
 }
 
+.togglePassword {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--transition-fast);
+}
+
+.togglePassword:hover {
+    color: var(--primary);
+}
+
 .loginFooter {
     margin-top: 24px;
     padding-top: 24px;

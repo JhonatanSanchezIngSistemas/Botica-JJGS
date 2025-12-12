@@ -15,6 +15,7 @@ const ProductTable = ({ productos, handleDelete }) => {
                             <th>Precio</th>
                             <th>Stock</th>
                             <th>Descripción</th>
+                            <th>Categoría</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -26,6 +27,7 @@ const ProductTable = ({ productos, handleDelete }) => {
                                 <td>S/ {producto.precio}</td>
                                 <td>{producto.stock}</td>
                                 <td>{producto.descripcion}</td>
+                                <td>{producto.categoria}</td>
                                 <td>
                                     <button
                                         onClick={() => handleDelete(producto.id)}

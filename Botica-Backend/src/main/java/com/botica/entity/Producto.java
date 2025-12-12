@@ -16,4 +16,5 @@ public class Producto {
     private Integer stock;
     private String descripcion;
     private String categoria; // Categoría del producto (Farmacia, Cuidado Personal, etc.)
+    private Long boticaId; // ID de la botica para multi-tenant
 }

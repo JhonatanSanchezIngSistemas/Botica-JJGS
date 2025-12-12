@@ -20,4 +20,16 @@ public class LoginResponse {
     private String username;
     private String email;
     private List<String> roles;
+
+    // Datos de la botica del usuario
+    private BoticaInfo botica;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BoticaInfo {
+        private Long id;
+        private String nombreComercial;
+    }
 }

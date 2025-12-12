@@ -1,0 +1,18 @@
+.clientesPage {
+  padding: 2rem;
+}
+.searchBar {
+  margin-bottom: 1rem;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th, .table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 1rem;
+  text-align: left;
+}
+.table th {
+  background: #f1f5f9;
+}

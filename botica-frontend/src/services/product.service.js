@@ -12,7 +12,7 @@ import logger from '../utils/logger';
 const getProductos = async () => {
     try {
         const response = await api.get('/api/productos');
-        return response.data;
+        return response; // Retornamos response completo para que componentes usen response.data
     } catch (error) {
         throw error;
     }

@@ -23,4 +23,6 @@ public class ProductoRequestDTO {
     private Integer stock;
 
     private String descripcion;
+
+    private String categoria;
 }

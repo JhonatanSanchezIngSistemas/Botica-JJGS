@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiLock, FiUser, FiAlertCircle } from 'react-icons/fi';
+import { FiLock, FiUser, FiAlertCircle, FiEye, FiEyeOff } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button/Button';
 import styles from './LoginPage.module.css';
@@ -10,6 +10,7 @@ const LoginPage = () => {
     const [credentials, setCredentials] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const { login } = useAuth();
 
@@ -78,10 +79,10 @@ const LoginPage = () => {
 
                     <div className={styles.inputGroup}>
                         <label>Contraseña</label>
-                        <div className={styles.inputWrapper}>
+                        <div className={styles.inputWrapper} style={{ position: 'relative' }}>
                             <FiLock className={styles.inputIcon} />
                             <input
-                                type="password"
+                                type={showPassword ? 'text' : 'password'}
                                 value={credentials.password}
                                 onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                                 placeholder="••••••••"
@@ -89,6 +90,15 @@ const LoginPage = () => {
                                 required
                                 disabled={loading}
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className={styles.togglePassword}
+                                tabIndex={-1}
+                                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                            >
+                                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                            </button>
                         </div>
                     </div>
 
@@ -104,12 +114,7 @@ const LoginPage = () => {
                     </Button>
                 </form>
 
-                <div className={styles.loginFooter}>
-                    <p className={styles.hint}>
-                        💡 Credenciales de prueba: <br />
-                        <strong>admin</strong> / <strong>123456</strong>
-                    </p>
-                </div>
+                {/* Footer eliminado: ya no se muestran credenciales de prueba */}
 
                 <button
                     className={styles.backButton}
