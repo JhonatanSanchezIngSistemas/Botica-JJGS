@@ -290,8 +290,7 @@ const DashboardPage = () => {
             loadStats();
             alert('¡Venta registrada exitosamente!');
         } catch (error) {
-            console.error('Error registrando venta:', error);
-            alert('Error al registrar la venta. Revisa la consola.');
+            alert('Error al registrar la venta: ' + (error.message || 'Error desconocido'));
         }
     };
 
