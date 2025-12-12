@@ -54,8 +54,9 @@ public class SecurityConfig {
         // Boot 3
         config.addAllowedOriginPattern("http://localhost:3000");
         config.addAllowedOriginPattern("http://localhost:3001");
-        config.addAllowedHeader("Content-Type");
-        config.addAllowedHeader("Authorization");
+        config.addAllowedOriginPattern("https://encapbot.netlify.app");
+        config.addAllowedOriginPattern("https://*.netlify.app");
+        config.addAllowedHeader("*");
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
